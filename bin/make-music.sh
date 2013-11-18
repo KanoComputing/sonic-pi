@@ -37,6 +37,9 @@ function init()
 
     echo "Creating content directory"
     mkdir -pv $CONTENT_DIR
+
+    echo "Giving read-access"
+    sudo chmod +r /dev/input/event*
 }
 
 # remove temporary pid file always at exit time
