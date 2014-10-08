@@ -52,8 +52,8 @@ module OSC
 
     def safe_detector
       loop do
-        osc_data, network = @socket.recvfrom( 16384 )
         begin
+          osc_data, network = @socket.recvfrom( 16384 )
           ip_info = Array.new
           ip_info << network[1]
           ip_info.concat(network[2].split('.'))
@@ -62,7 +62,6 @@ module OSC
           end
         rescue Exception => e
           Kernel.puts e.message
-          Kernel.puts e.backtrace.inspect
         end
       end
     end
@@ -235,6 +234,26 @@ class Array
   def choose
     rgen = Thread.current.thread_variable_get :sonic_pi_spider_random_generator
     self[rgen.rand(self.size)]
+  end
+
+  alias_method :__orig_sample__, :sample
+  def sample(*args, &blk)
+    rgen = Thread.current.thread_variable_get :sonic_pi_spider_random_generator
+    if rgen
+      self[rgen.rand(self.size)]
+    else
+      __orig_sample__ *args, &blk
+    end
+  end
+
+  alias_method :__orig_shuffle__, :shuffle
+  def shuffle(*args, &blk)
+    rgen = Thread.current.thread_variable_get :sonic_pi_spider_random_generator
+    if rgen
+      __orig_shuffle__(random: rgen)
+    else
+      __orig_shuffle__ *args, &blk
+    end
   end
 end
 

@@ -33,6 +33,15 @@ module SonicPi
       end
     end
 
+    def num_audio_busses_for_current_os
+      if os == :raspberry
+        128
+      else
+        1024
+      end
+
+    end
+
     def default_sched_ahead_time
       if (os == :raspberry)
         1
@@ -130,6 +139,14 @@ module SonicPi
       false
     end
 
+    def resolve_tilde_path(p)
+      if p.start_with? "~"
+        Dir.home << p[1..-1]
+      else
+        p
+      end
+    end
+
     def resolve_synth_opts_hash_or_array(opts)
       case opts
       when Hash
@@ -143,13 +160,15 @@ module SonicPi
           when Hash
             return opts[0]
           else
-            raise "Invalid options. Options should either be an even list of key value pairs or a single Hash. Got #{opts.inspect}"
+            raise "Invalid options. Options should either be an even list of key value pairs, a single Hash or nil. Got #{opts.inspect}"
           end
         when 0
           return {}
         end
+      when NilClass
+        return {}
       else
-        raise "Invalid options. Options should either be an even list of key value pairs or a single Hash. Got #{opts.inspect}"
+        raise "Invalid options. Options should either be an even list of key value pairs, a single Hash or nil. Got #{opts.inspect}"
       end
     end
   end

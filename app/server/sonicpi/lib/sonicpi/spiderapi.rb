@@ -30,12 +30,29 @@ module SonicPi
         end
       end
     end
+    doc name:           :live_loop,
+        introduced:     Version.new(2,1,0),
+        summary:        "Run code in a new thread, loop it automatically",
+        args:           [[:name, :symbol]],
+        opts:           {},
+        accepts_block: true,
+        doc: "Run the block in a new thread with the given name, and loop it forever.  Also sends a cue with the same name each time the block runs.",
+        examples: ["
+live_loop :ping do
+  sample :elec_ping
+  sleep 1
+end
+"]
 
 
-
-    def after(times, &block)
+    def after(times, params=nil, &block)
       raise "after must be called with a code block" unless block
+      params ||= []
+      raise "params needs to be a list-like thing" unless params.respond_to? :[]
 
+      params_size = params.size
+
+      raise "times needs to be a list-like thing" unless times.respond_to? :each_with_index
       times.each_with_index do |t, idx|
         in_thread do
           sleep t
@@ -43,16 +60,42 @@ module SonicPi
           when 0
             block.call
           when 1
-            block.call(t)
-          when 2
-            block.call(t, idx)
+            if params_size == 0
+              block.call(nil)
+            else
+              p = params[idx % params_size]
+              block.call(p)
+            end
+          else
+            raise "block for after should only accept 0 or 1 parameters. You gave: #{block.arity}."
           end
         end
       end
     end
-
-
-
+    doc name:           :after,
+        introduced:     Version.new(2,1,0),
+        summary:        "Run a block at the given intervals",
+        doc:            "Given a list of times, run the block once after waiting each given time. If passed an optional params list, will pass each param individually to each block call. If params is smaller than args, the values will rotate through.",
+        args:           [[:times, :list],
+                         [:params, :list]],
+        opts:           {:params=>nil},
+        accepts_block:  true,
+        examples:       ["
+after [1, 2, 4] do  # plays a note after waiting 1 second,
+  play 75           # then after 1 more second,
+end                 # then after 2 more seconds (4 seconds total)
+",
+"
+after [1, 2, 3], [75, 76, 77] do |n|  # plays 3 different notes
+  play n
+end
+",
+"
+after [1, 2, 3],
+    [{:amp=>0.5}, {:amp=> 0.8}] do |p| # alternate soft and loud
+  sample :drum_cymbal_open, p          # cymbal hits three times
+end
+"]
 
     def version
       @version
@@ -270,6 +313,24 @@ end"]
 
 
 
+    def vt
+      __current_local_run_time
+    end
+    doc name:           :vt,
+        introduced:     Version.new(2,1,0),
+        summary:        "Get virtual time",
+        args:           [[]],
+        opts:           nil,
+        accepts_block:  false,
+        doc:           "Get the virtual time of the current thread.",
+        examples:      [
+"puts vt # prints 0
+ sleep 1
+ puts vt # prints 1"]
+
+
+
+
     def dice(num_sides=6)
       rrand_i(1, num_sides)
     end
@@ -311,6 +372,7 @@ one_in 100 # will return true with a probability of 1/100, false with a probabil
 
 
     def rrand(min, max)
+      return min if min == max
       range = (min - max).abs
       rgen = Thread.current.thread_variable_get :sonic_pi_spider_random_generator
       r = rgen.rand(range.to_f)
@@ -337,11 +399,12 @@ end"]
 
 
     def rrand_i(min, max)
+      return min if min == max
       range = (min - max).abs
       rgen = Thread.current.thread_variable_get :sonic_pi_spider_random_generator
       r = rgen.rand(range.to_i + 1)
       smallest = [min, max].min
-      (r + smallest).to_f
+      (r + smallest)
     end
     doc name:           :rrand_i,
         introduced:     Version.new(2,0,0),
@@ -352,7 +415,7 @@ end"]
         doc:            "Given two numbers, this produces a whole number between the min and max you supplied inclusively. Both min and max need to be supplied. For random floats, see rrand",
         examples:      [
 "
-print rrand_i(0, 10) #=> will print a random number between 0 and 10 (e.g. 4.0, 0.0 or 10.0) to the output pane",
+print rrand_i(0, 10) #=> will print a random number between 0 and 10 (e.g. 4, 0 or 10) to the output pane",
 "
 loop do
   play rrand_i(60, 72) #=> Will play a random midi note between C4 (60) and C5 (72)
@@ -382,7 +445,7 @@ print rand(0.5) #=> will print a number like 0.397730007820797 to the output pan
 
     def rand_i(max=2)
       rgen = Thread.current.thread_variable_get :sonic_pi_spider_random_generator
-      rgen.rand(max.to_i).to_f
+      rgen.rand(max.to_i)
     end
     doc name:           :rand_i,
         introduced:     Version.new(2,0,0),
@@ -390,10 +453,10 @@ print rand(0.5) #=> will print a number like 0.397730007820797 to the output pan
         args:           [[:max, :number]],
         opts:           nil,
         accepts_block:  false,
-        doc:            "Given a max number, produces a whole numberfloat between 0 and the supplied max value. With no args returns either 0.0 or 1.0",
+        doc:            "Given a max number, produces a whole numberfloat between 0 and the supplied max value. With no args returns either 0 or 1",
         examples:      [
 "
-print rand_i(10) #=> will print a number like 7.0 to the output pane"]
+print rand_i(10) #=> will print a number like 7 to the output pane"]
 
 
 
@@ -692,14 +755,18 @@ play 62
 
 
     def cue(cue_id)
-      __no_kill_block do
+      payload = {
+        :time => Thread.current.thread_variable_get(:sonic_pi_spider_time),
+        :run => current_job_id
+      }
+      __delayed_highlight_message "cue #{cue_id.to_sym.inspect}"
+      Thread.new do
+        Thread.current.thread_variable_set(:sonic_pi_thread_group, :cue)
+        # sleep for a tiny amount of wall-clock time to give other temporally
+        # synced threads real time to register syncs at similar virtual
+        # times.
         Kernel.sleep @sync_real_sleep_time
-payload = {
-          :time => Thread.current.thread_variable_get(:sonic_pi_spider_time),
-          :run => current_job_id
-         }
-        __delayed_highlight_message "cue #{cue_id.to_sym.inspect}"
-        @events.event("/spider_thread_sync/" + cue_id.to_s, payload)
+        @events.async_event("/spider_thread_sync/" + cue_id.to_s, payload)
       end
     end
     doc name:           :cue,
@@ -770,12 +837,14 @@ end"
 
 
     def sync(cue_id)
-      __delayed_highlight3_message "sync #{cue_id.to_sym.inspect}"
-      __schedule_delayed_blocks_and_messages!
       p = Promise.new
       @events.oneshot_handler("/spider_thread_sync/" + cue_id.to_s) do |payload|
         p.deliver! payload
       end
+
+      __delayed_highlight3_message "sync #{cue_id.to_sym.inspect}"
+      __schedule_delayed_blocks_and_messages!
+
       payload = p.get
       time = payload[:time]
       run_id = payload[:run]

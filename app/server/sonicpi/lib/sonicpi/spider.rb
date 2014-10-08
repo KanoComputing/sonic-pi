@@ -25,8 +25,9 @@ require_relative "mods/sound"
 require_relative "gitsave"
 require_relative "lifecyclehooks"
 require_relative "version"
-#require_relative "oscval"
+require_relative "oscval"
 #require_relative "oscevent"
+#require_relative "stream"
 
 require 'thread'
 require 'fileutils'
@@ -41,7 +42,7 @@ module SonicPi
 
     def initialize(hostname, port, msg_queue, max_concurrent_synths, user_methods)
 
-      @version = Version.new(2, 0, 1)
+      @version = Version.new(2, 1, 0, "dev")
 
       @life_hooks = LifeCycleHooks.new
       @msg_queue = msg_queue
@@ -124,6 +125,7 @@ module SonicPi
     end
 
     def __delayed_user_message(s)
+      s = s.round(4) if s.is_a? Float
       s = s.inspect unless s.is_a? String
       __enqueue_multi_message(1, s)
     end

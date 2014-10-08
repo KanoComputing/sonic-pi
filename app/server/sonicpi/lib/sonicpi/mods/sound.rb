@@ -13,6 +13,7 @@
 require 'tmpdir'
 require 'fileutils'
 require 'thread'
+require 'net/http'
 require "hamster/set"
 require "hamster/hash"
 require_relative "../blanknode"
@@ -120,6 +121,52 @@ module SonicPi
 
 
 
+
+
+       def rest?(n)
+         case n
+         when Hash
+           if n.has_key?(:note)
+             note = n[:note]
+             return (note.nil? || note == :r || note == :rest)
+           else
+             return false
+           end
+         when Symbol
+           return n == :r || n == :rest
+         when NilClass
+           return true
+         else
+           return false
+         end
+       end
+       doc name:          :rest?,
+           introduced:    Version.new(2,1,0),
+           summary:       "Determine if note or args is a rest",
+           doc:           "Given a note or an args map, returns true if it represents a rest and false if otherwise",
+           args:          [[:note_or_args, :number_symbol_or_map]],
+           accepts_block: false,
+           examples:      ["puts rest? nil # true",
+"puts rest? :r # true",
+"puts rest? :rest # true",
+"puts rest? 60 # false",
+"puts rest? {} # false",
+"puts rest? {note: :rest} # true",
+"puts rest? {note: nil} # true",
+"puts rest? {note: 50} # false"]
+
+
+
+
+       def use_sample_bpm(sample_name)
+         sd = sample_duration(sample_name)
+         use_bpm 60.0 / sd
+       end
+
+       def with_sample_bpm(sample_name, &block)
+         sd = sample_duration(sample_name)
+         with_bpm(60.0 / sd, &block)
+       end
 
     def use_arg_bpm_scaling(bool, &block)
       raise "use_arg_bpm_scaling does not work with a block. Perhaps you meant with_arg_bpm_scaling" if block
@@ -514,11 +561,23 @@ play 50 # Plays with supersaw synth
            hide:          true
 
 
+       def invert_stereo!
+         @mod_sound_studio.mixer_invert_stereo(true)
+       end
+
+       def standard_stereo!
+         @mod_sound_studio.mixer_invert_stereo(false)
+       end
 
 
        def synth(synth_name, *args)
          ensure_good_timing!
          args_h = resolve_synth_opts_hash_or_array(args)
+
+         if rest? args_h
+           __delayed_message "synth #{synth_name.to_sym.inspect}, {note: :rest}"
+           return nil
+         end
 
          if args_h.has_key? :note
            n = args_h[:note]
@@ -552,16 +611,32 @@ synth :dsaw, note: 50 # Play note 50 of the :dsaw synth with a release of 5"]
        def play(n, *args)
          ensure_good_timing!
          return play_chord(n, *args) if n.is_a?(Array)
-         return nil if (n.nil? || n == :r || n == :rest)
-
          n = n.call if n.is_a? Proc
-         n = note(n) unless n.is_a? Numeric
+         synth_name = current_synth_name
+         if rest? n
+           __delayed_message "synth #{synth_name.to_sym.inspect}, {note: :rest}"
+           return nil
+         end
+         init_args_h = {}
          args_h = resolve_synth_opts_hash_or_array(args)
+
+         if n.is_a? Numeric
+           # Do nothing
+         elsif n.is_a? Hash
+           init_args_h = resolve_synth_opts_hash_or_array(n)
+
+           n = note(init_args_h[:note])
+           return nil if n.nil?
+           n
+         else
+           n = note(n)
+         end
+
          if shift = Thread.current.thread_variable_get(:sonic_pi_mod_sound_transpose)
            n += shift
          end
          args_h[:note] = n
-         trigger_inst current_synth_name, args_h
+         trigger_inst synth_name, init_args_h.merge(args_h)
        end
        doc name:          :play,
            introduced:    Version.new(2,0,0),
@@ -1370,6 +1445,7 @@ set_volume! 2 # Set the main system volume to 2",
            __delayed_message "Loaded sample :#{path}" unless cached
            return info
          when String
+           path = resolve_tilde_path(path)
            if File.exists?(path)
              info, cached = @mod_sound_studio.load_sample(path)
              __delayed_message "Loaded sample #{path.inspect}" unless cached
@@ -1493,6 +1569,7 @@ end "]
 
 
        def sample(path, *args_a_or_h)
+         return if path == nil
          ensure_good_timing!
          buf_info = load_sample(path)
          args_h = resolve_synth_opts_hash_or_array(args_a_or_h)
@@ -1597,7 +1674,8 @@ puts status # Returns something similar to:
 
 
        def note(n, *args)
-         return nil if (n.nil? || n == :r || n == :rest)
+         return nil if rest?(n)
+
          return Note.resolve_midi_note_without_octave(n) if args.empty?
          args_h = resolve_synth_opts_hash_or_array(args)
          octave = args_h[:octave]
@@ -1673,7 +1751,7 @@ play degree(2, :C3, :minor)
        def scale(tonic, name, *opts)
          opts = resolve_synth_opts_hash_or_array(opts)
          opts = {:num_octaves => 1}.merge(opts)
-         Scale.new(tonic, name,  opts[:num_octaves]).to_a
+         Scale.new(tonic, name,  opts[:num_octaves])
        end
        doc name:          :scale,
            introduced:    Version.new(2,0,0),
@@ -2011,6 +2089,7 @@ stop bar"]
 
 
        def load_synthdefs(path)
+         path = resolve_tilde_path(path)
          raise "No directory exists called #{path.inspect} " unless File.exists? path
          @mod_sound_studio.load_synthdefs(path)
          __info "Loaded synthdefs in path #{path}"
@@ -2145,12 +2224,18 @@ stop bar"]
          t_l_args = Thread.current.thread_variable_get(:sonic_pi_mod_sound_synth_defaults) || {}
 
          combined_args = defaults.merge(t_l_args.merge(args_h))
-         combined_args = call_synth_default_fns(combined_args)
+         metadef_prochash_lookup!(combined_args)
+         call_synth_default_fns!(combined_args)
+
          combined_args["out_bus"] = out_bus
 
          validate_if_necessary! info, combined_args
 
          combined_args = scale_time_args_to_bpm(combined_args, info) if info && Thread.current.thread_variable_get(:sonic_pi_spider_arg_bpm_scaling)
+
+         # shortcut out if we're actually a rest
+         # (i.e. if note is nil, :rest or :r)
+         return nil if rest?(combined_args)
 
          job_id = current_job_id
          __no_kill_block do
@@ -2256,7 +2341,8 @@ stop bar"]
            synth_name = info ? info.scsynth_name : synth_name
 
            combined_args = defaults.merge(args_h)
-           combined_args = call_synth_default_fns(combined_args)
+           metadef_prochash_lookup!(combined_args)
+           call_synth_default_fns!(combined_args)
            combined_args["out_bus"] = @mod_sound_studio.mixer_bus
 
            validate_if_necessary! info, combined_args
@@ -2367,9 +2453,42 @@ stop bar"]
          end
        end
 
-       def call_synth_default_fns(args_h)
+       def call_synth_default_fns!(args_h)
          args_h.each do |k, v|
-           args_h[k] = v.call if v.is_a? Proc
+           # This will auto call any procs vals due to args_h having
+           # auto prohash behaviour thrown into its metaclass
+           args_h[k]
+         end
+       end
+
+       def metadef_prochash_lookup!(args_h)
+         #override the [] lookup in a specific hash so that it knows to
+         #auto call any vals that are procs and to be aware of cyclic
+         #behaviour.
+         args_h.meta_def :[] do |k|
+           v = fetch k
+           return v unless v.is_a? Proc
+
+           trace_id = :sonic_pi_prochash_lookup_trace
+           trace = Thread.current.thread_variable_get(trace_id)
+           trace = trace || []
+           Thread.current.thread_variable_set(trace_id, trace)
+
+           raise "Recursive synth defaults lambda lookup. Looks like two synth args had lambda defaults which were defined in terms of each other!" if trace.include? k
+           trace << k
+
+           res = if v.arity == 0
+                   new_val = v.call
+                   store k, new_val
+                   new_val
+                 else
+                   new_val = v.call self
+                   store k, new_val
+                   new_val
+                 end
+
+           trace.delete k
+           return res
          end
        end
 
@@ -2429,6 +2548,58 @@ stop bar"]
        def set_current_synth(name)
          Thread.current.thread_variable_set(:sonic_pi_mod_sound_current_synth_name, name)
        end
+
+       def freesound(id)
+         cache_dir = home_dir + '/freesound/'
+         ensure_dir(cache_dir)
+
+         cache_file = cache_dir + id.to_s + ".wav"
+
+         return cache_file if File.exists?(cache_file)
+
+         __info "Caching freesound #{id}..."
+
+         in_thread(name: "__freesound_#{id}".to_sym) do
+           # API key borrowed from Overtone
+           apiURL = 'http://www.freesound.org/api/sounds/' + id.to_s + '/serve/?api_key=47efd585321048819a2328721507ee23'
+
+           resp = Net::HTTP.get_response(URI(apiURL))
+           case resp
+           when Net::HTTPSuccess then
+             if not resp['Content-Disposition'] =~ /\.wav\"$/ then
+               raise 'Only WAV freesounds are supported, sorry!'
+             end
+
+             open(cache_file, 'wb') do |file|
+               file.write(resp.body)
+             end
+             __info "Freesound #{id} loaded and ready to fire!"
+           else
+             __info "Failed to download freesound #{id}: " + resp.value
+           end
+         end
+         return nil # nothing to do until it's loaded
+       end
+       doc name:          :freesound,
+           introduced:    Version.new(2,1,0),
+           summary:       "Download sample from freesound.org",
+           doc:           "Download and cache a sample by ID from freesound.org, and return its path for playback via sample.  Only WAV samples are supported!",
+           args:          [[:path, :string]],
+           opts:          nil,
+           accepts_block: false,
+           examples:      ["
+sample freesound(250129)  # takes time to download the first time, but then the sample is cached locally
+",
+"
+puts freesound(250129)    # preloads a freesound and prints its local path, such as '/home/user/.sonic_pi/freesound/250129.wav'
+",
+"
+loop do
+  sample freesound(27130)
+  sleep sample_duration(freesound(27130))
+end
+"
+]
      end
    end
  end
