@@ -24,6 +24,7 @@
 #include <QListWidget>
 #include <QProcess>
 #include <QFuture>
+#include <QShortcut>
 #include "oscpkt.hh"
 #include "udp.hh"
 #include <iostream>
@@ -54,15 +55,23 @@ public:
 #endif
 protected:
     void closeEvent(QCloseEvent *event);
+    void wheelEvent(QWheelEvent *event);
 
 private slots:
 
     void unhighlightCode();
     void runCode();
+    void update_mixer_invert_stereo();
     void stopCode();
     void beautifyCode();
     void reloadServerCode();
     void stopRunningSynths();
+    void mixerInvertStereo();
+    void mixerStandardStereo();
+    void mixerLpfEnable(float freq);
+    void mixerHpfEnable(float freq);
+    void mixerHpfDisable();
+    void mixerLpfDisable();
     QString currentTabLabel();
     bool saveAs();
     bool saveDialog();
@@ -85,6 +94,8 @@ private slots:
     void serverError(QProcess::ProcessError error);
     void serverFinished(int exitCode, QProcess::ExitStatus exitStatus);
     void replaceBuffer(QString id, QString content);
+    void tabNext();
+    void tabPrev();
 
 private:
 
@@ -111,6 +122,9 @@ private:
                      int len);
     QListWidget *createHelpTab(QTextEdit *docPane, QString name);
     QsciScintilla * getCurrentWorkspace();
+    QKeySequence cmdAltKey(char key);
+    void setupAction(QAction *action, char key, QString tooltip, 
+		     const char *slot);
 
     QFuture<void> osc_thread;
 
@@ -161,9 +175,7 @@ private:
     QAction *helpAct;
     QAction *textAlignAct;
     QAction *textIncAct1;
-    QAction *textIncAct2;
     QAction *textDecAct1;
-    QAction *textDecAct2;
 
     QAction *saveAsAct;
     QAction *exitAct;
@@ -171,6 +183,13 @@ private:
     QAction *copyAct;
     QAction *pasteAct;
 
+    QShortcut *tabNextKey;
+    QShortcut *tabPrevKey;
+    QShortcut *textIncKey2;
+    QShortcut *textDecKey2;
+    QShortcut *reloadKey;
+
+    QCheckBox *mixer_invert_stereo;
     QCheckBox *print_output;
     QCheckBox *check_args;
     QCheckBox *clear_output_on_run;
