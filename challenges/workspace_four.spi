@@ -5,7 +5,7 @@
 
 # Let's add a new instrument to the tune you just wrote! 
 
-# 1. Type: with_synth "saw_beep"
+# 1. Type: use_synth :saw
 
 
 
