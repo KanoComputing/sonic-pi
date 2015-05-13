@@ -60,6 +60,7 @@
 #include <QSettings>
 #include <QScrollBar>
 #include <QSignalMapper>
+#include <QtDBus/QtDBus>
 
 // QScintilla stuff
 #include <Qsci/qsciapis.h>
@@ -77,6 +78,9 @@
 #include "oscpkt.hh"
 #include "udp.hh"
 using namespace oscpkt;
+
+#include "dbus_actions.h"
+
 
 // OS specific stuff
 #if defined(Q_OS_WIN)
@@ -403,6 +407,16 @@ MainWindow::MainWindow(QApplication &app, QSplashScreen* splash, std::string loa
     docWidget->show();
     startupPane->show();
   }
+
+  registerDBusConnections();
+
+}
+
+void MainWindow::registerDBusConnections() {
+    DbusActionsAdaptor *test_adaptor = new DbusActionsAdaptor(this);
+    QDBusConnection connection = QDBusConnection::sessionBus();
+    connection.registerObject("/me/kano/sonicpi", test_adaptor, QDBusConnection::ExportAllSlots);
+    connection.registerService("me.kano.sonicpi");
 }
 
 void MainWindow::changeTab(int id){

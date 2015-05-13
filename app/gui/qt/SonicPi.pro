@@ -24,7 +24,7 @@
 # DEPENDPATH += /Users/sam/Downloads/tmp/QScintilla-gpl-2.8.5-snapshot-62d128cc92de/Qt4Qt5
 # --
 
-QT       += core gui concurrent network
+QT       += core gui concurrent network dbus
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -65,7 +65,8 @@ SOURCES += main.cpp \
            save_dialog.cpp \
            share_dialog.cpp \
            load_source_dialog.cpp \
-           audio_tools.cpp
+           audio_tools.cpp \
+           dbus_actions.cpp
 win32 {
 # have to link these explicitly for some reason
   SOURCES += platform/win/moc_qsciscintilla.cpp \
@@ -88,7 +89,8 @@ HEADERS  += mainwindow.h \
             save_dialog.h \
             share_dialog.h \
             load_source_dialog.h \
-            audio_tools.h
+            audio_tools.h \
+            dbus_actions.h
 
 TRANSLATIONS = lang/sonic-pi_de.ts
 
