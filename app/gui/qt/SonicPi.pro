@@ -111,7 +111,7 @@ RESOURCES += \
 RC_FILE = SonicPi.rc
 
 ICON = images/app.icns
-LIBS         += -lqscintilla2 -lmp3lame `pkg-config --libs sndfile`
+LIBS         += -lqscintilla2 `pkg-config --libs sndfile`
 
 win32 {
 	install_qsci.files = $$[QT_INSTALL_LIBS]\qscintilla2.dll
