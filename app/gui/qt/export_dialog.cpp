@@ -56,8 +56,8 @@ int ExportDialog::save() {
 
     save_to_file(filepath + std::string(".spi"), file_contents);
     save_to_file(filepath + std::string(".json"), json_data);
-    AudioTools::convert_wav_to_mp3(SAMPLE_TMP_PATH,
-                                   filepath + std::string(".mp3"));
+    AudioTools::convert_wav_to_ogg(SAMPLE_TMP_PATH,
+                                   filepath + std::string(".ogg"));
 
 	return 0;
 }
