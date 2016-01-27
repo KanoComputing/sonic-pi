@@ -1262,6 +1262,13 @@ void MainWindow::load()
     delete load_from_dialog;
 }
 
+
+void MainWindow::launch_share(const QString share_filename)
+{
+    // Loads "share_filename" directly into the workspace
+    getCurrentWorkspace()->setText(share_filename);
+}
+
 void MainWindow::sendOSC(Message m)
 {
   int TIMEOUT = 30000;
