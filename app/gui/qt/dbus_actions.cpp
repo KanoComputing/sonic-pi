@@ -32,6 +32,12 @@ void DbusActionsAdaptor::load()
     QMetaObject::invokeMethod(parent(), "load");
 }
 
+void DbusActionsAdaptor::launch_share(const QString share_filename)
+{
+    // handle method call me.kano.sonicpi.load_share, passing the filename to load into workspace.
+    QMetaObject::invokeMethod(parent(), "load_share", Qt::AutoConnection, Q_ARG(QString, share_filename));
+}
+
 void DbusActionsAdaptor::make()
 {
     // handle method call me.kano.sonicpi.make
