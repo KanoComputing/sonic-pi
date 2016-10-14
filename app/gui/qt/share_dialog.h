@@ -14,11 +14,16 @@ class ShareDialog : public ExportDialog
 				initialise();
             };
 
+        int open_external_dialog();
+
     protected slots:
 	    int export_file();
 
 	protected:
 		void initialise();
+
+    private:
+        QString getFormatedDate() const;
 };
 
 #endif

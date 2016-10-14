@@ -1434,7 +1434,11 @@ bool MainWindow::shareDialog()
     ShareDialog * share_dialog = new ShareDialog(this);
     share_dialog->set_file_contents(getCurrentWorkspace()->text().toUtf8().constData());
 
-    share_dialog->exec();
+    // Share using kano-share-gui tool.
+    share_dialog->open_external_dialog();
+
+    // Do not call this function anymore.
+    // share_dialog->exec();
 
     delete share_dialog;
 
