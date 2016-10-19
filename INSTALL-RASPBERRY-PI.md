@@ -12,12 +12,14 @@ The dependencies for building and running this are:
 
 * `supercollider`
 * `ruby1.9.3`
-* `libqscintilla2-8`
+* `libqscintilla2-l10n`
 * `libqscintilla2-dev`
 * `qt4-dev-tools`
 * `cmake`
 * `ruby-dev`
 * `libffi-dev`
+* `pkg-config`
+* `libsndfile1-dev`
 
 Use `sudo apt-get install` to ensure each of these are on your system.
 
@@ -27,7 +29,7 @@ Compile the server extensions by `cd`ing into the directory `app/server/bin` and
 
 ### Qt GUI
 
-`cd` into the directory `app/gui/qt/` and run the script `rp-build-app`. This will also take some time.
+`cd` into the directory `app/gui/qt/` and run the script `rp-build-app`. This will also take some time. Make sure you quit all apps as this process uses a lot of RAM and the compile could fail midway if the Pi runs out.
 
 ### Running
 
