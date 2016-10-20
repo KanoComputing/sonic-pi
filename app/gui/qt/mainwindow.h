@@ -274,6 +274,7 @@ private:
     QToolBar *toolBar;
 
     QAction *recAct;
+    QAction *shareAct;
 
     QCheckBox *mixer_invert_stereo;
     QCheckBox *mixer_force_mono;

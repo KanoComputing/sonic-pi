@@ -1434,8 +1434,13 @@ bool MainWindow::shareDialog()
     ShareDialog * share_dialog = new ShareDialog(this);
     share_dialog->set_file_contents(getCurrentWorkspace()->text().toUtf8().constData());
 
+    // Wrap the dialog launch in a disabled / enabled button state sequence.
+    shareAct->setEnabled(false);
+
     // Share using kano-share-gui tool.
     share_dialog->open_external_dialog();
+
+    shareAct->setEnabled(true);
 
     // Do not call this function anymore.
     // share_dialog->exec();
@@ -2274,7 +2279,7 @@ void MainWindow::createToolBar()
   new QShortcut(ctrlKey('s'), this, SLOT(saveDialog())); // ctrl + s
 
   // Share
-  QAction *shareAct = new QAction(QIcon(":/images/share.png"), tr("&Share..."), this);
+  shareAct = new QAction(QIcon(":/images/share.png"), tr("&Share..."), this);
   shareAct->setToolTip(tr("Share your creation with the world"));
   shareAct->setStatusTip(tr("Share your creation with the world"));
   connect(shareAct, SIGNAL(triggered()), this, SLOT(shareDialog()));
