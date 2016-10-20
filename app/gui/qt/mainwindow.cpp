@@ -1431,13 +1431,22 @@ bool MainWindow::saveDialog()
 
 bool MainWindow::shareDialog()
 {
+
+    // FIXME: there is still the possibility to chain multiple click events
+    if (!shareAct->isEnabled()) {
+      return false;
+    }
+
     ShareDialog * share_dialog = new ShareDialog(this);
     share_dialog->set_file_contents(getCurrentWorkspace()->text().toUtf8().constData());
 
     // Wrap the dialog launch in a disabled / enabled button state sequence.
     shareAct->setEnabled(false);
 
-    // Share using kano-share-gui tool.
+    // We let QT breathe to actually disable the button
+    QCoreApplication::processEvents();
+
+    // Share using kano-share-gui tool - synchronous call.
     share_dialog->open_external_dialog();
 
     shareAct->setEnabled(true);
