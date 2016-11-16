@@ -39,7 +39,7 @@ int ShareDialog::open_external_dialog() {
     std::string filepath = save_dir + filename + std::string(".spi");
 
     std::string cmd = std::string("/usr/bin/kano-share-container ") + filepath
-                    + std::string(" --app-title sonic-pi");
+                    + std::string(" --app-title make-music");
     if (!(share_proc = popen(cmd.c_str(), "r"))) {
         this->setCursor(QCursor(Qt::ArrowCursor));
         return -1;
