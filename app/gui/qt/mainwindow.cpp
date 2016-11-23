@@ -1431,11 +1431,25 @@ bool MainWindow::saveDialog()
 
 bool MainWindow::shareDialog()
 {
+
+    // FIXME: there is still the possibility to chain multiple click events
+    if (!shareAct->isEnabled()) {
+      return false;
+    }
+
     ShareDialog * share_dialog = new ShareDialog(this);
     share_dialog->set_file_contents(getCurrentWorkspace()->text().toUtf8().constData());
 
-    // Share using kano-share-gui tool.
+    // Wrap the dialog launch in a disabled / enabled button state sequence.
+    shareAct->setEnabled(false);
+
+    // We let QT breathe to actually disable the button
+    QCoreApplication::processEvents();
+
+    // Share using kano-share-gui tool - synchronous call.
     share_dialog->open_external_dialog();
+
+    shareAct->setEnabled(true);
 
     // Do not call this function anymore.
     // share_dialog->exec();
@@ -2274,7 +2288,7 @@ void MainWindow::createToolBar()
   new QShortcut(ctrlKey('s'), this, SLOT(saveDialog())); // ctrl + s
 
   // Share
-  QAction *shareAct = new QAction(QIcon(":/images/share.png"), tr("&Share..."), this);
+  shareAct = new QAction(QIcon(":/images/share.png"), tr("&Share..."), this);
   shareAct->setToolTip(tr("Share your creation with the world"));
   shareAct->setStatusTip(tr("Share your creation with the world"));
   connect(shareAct, SIGNAL(triggered()), this, SLOT(shareDialog()));
