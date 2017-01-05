@@ -10,6 +10,6 @@ Package: make-music
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, libc6, supercollider, jackd2,
  ruby (>=1.9.3), libqscintilla2-11, libqtgui4, libqt4-network, libqtdbus4,
- kano-toolset (>= 1.2-2), kano-profile (>=2.1-1), libsndfile1, kano-share-gui
+ kano-toolset (>= 1.2-2), kano-profile (>=2.1-1), libsndfile1, kano-webengine (>= 3.9.0-1)
 Description: Make Music with a music programming environment
  A programatic approach to making music based on Sam Aaron's Sonic Pi
