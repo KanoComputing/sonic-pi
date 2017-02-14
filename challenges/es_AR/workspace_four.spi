@@ -1,0 +1,24 @@
+#------------------------------------------------------#
+# Desafío 5 : Nuevo instrumento
+# ¡Cambia el sonido de tu música!
+#------------------------------------------------------#
+
+# ¡Agreguemos un nuevo instrumento a la canción que acabas de escribir! 
+
+# 1. Escribe: use_synth :saw
+
+
+
+# 2. Copia tu canción del desafío anterior y 
+#    pégala a continuación
+
+
+
+
+
+# ¡with_synth nos permite cambiar el efecto de sonido que usa
+# tu computadora cuando reproduce nuestra canción!
+
+#************************************#
+#     Ahora presiona la tecla RUN    #
+#************************************#

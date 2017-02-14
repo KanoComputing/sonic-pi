@@ -1,0 +1,27 @@
+#------------------------------------------------------#
+# Desafío 3 : Maestro del Tiempo
+# Controla tus notas con el tiempo
+#------------------------------------------------------#
+
+# El segundo ingrediente que necesitamos es DURACIÓN. Como lo dice su nombre, esto indica la
+# duración de cada nota.
+
+
+# 1. Escribe: play 80
+
+
+
+
+# 2. Escribe: sleep 1
+
+
+
+
+# Esto hará sonar la nota durante 1 segundo. Los números menores
+# hacen que la nota dure menos tiempo. ¿Por qué no experimentas un poco?
+
+
+
+#************************************#
+#     Ahora presiona la tecla RUN    #
+#************************************#

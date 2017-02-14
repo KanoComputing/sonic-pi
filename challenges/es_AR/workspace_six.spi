@@ -1,0 +1,31 @@
+#------------------------------------------------------#
+# Desafío 7 : ¡Realmente aleatorio!
+# Haz música con números aleatorios
+#------------------------------------------------------#
+
+
+# 1. Escribe: loop do
+
+
+
+# 2. Escribe: play rrand(50,100)
+
+
+
+# 3. Escribe: sleep rrand(0,0.5)
+
+
+
+# 4. Escribe: end
+
+
+
+# rrand rrand le dice a la computadora que elija un número aleatorio
+# entre los dos números que fijas.
+
+# P.ej. rrand(50,100) elegirá un número entre el 50 y el 100.
+
+
+#************************************#
+#     Ahora presiona la tecla RUN    #
+#************************************#

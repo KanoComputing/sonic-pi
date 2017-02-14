@@ -1,0 +1,21 @@
+#------------------------------------------------------#
+# Desafío 4 : ¡Sigue escribiendo!
+# Usa tus nuevas habilidades para escribir una canción.
+#------------------------------------------------------#
+
+# Utiliza play + sleep para componer tu propia canción a continuación:
+
+play 80
+sleep 1
+
+
+#¡Termínala tú!…
+
+
+
+
+
+
+#************************************#
+#     Ahora presiona la tecla RUN    #
+#************************************#

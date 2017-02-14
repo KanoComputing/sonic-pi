@@ -1,0 +1,21 @@
+#------------------------------------------------------#
+# Desafío 2 : Creador de Notas
+# ¡Empieza a escribir tu propia música!
+#------------------------------------------------------#
+
+Necesitamos DOS ingredientes para hacer música.
+Primero necesitamos el TONO. Esto nos dice qué tan aguda o grave es una nota.
+
+# 1. Escribe esto abajo: play 80
+
+
+
+
+
+
+# Esto tocará la octogésima nota en el piano. ¡Los números menores
+# hacen que el sonido sea más grave y los números mayores hacen que sea más agudo.
+
+#************************************#
+#     Ahora presiona el botón Run    #
+#************************************#

@@ -151,8 +151,12 @@ module SonicPi
       return @@project_path if @@project_path
     end
 
+    def locale
+      return ENV['LANG'].split('.')[0]
+    end
+
     def challenge_path
-        return File.absolute_path("#{root_path}/challenges")
+      return File.absolute_path("#{root_path}/challenges/#{locale}")
     end
 
     def log_path
