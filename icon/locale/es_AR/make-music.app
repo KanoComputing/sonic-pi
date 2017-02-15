@@ -15,5 +15,6 @@
     "categories": [
         "code"
     ], 
-    "icon": "sonicpi"
+    "icon": "sonicpi",
+    "priority": 50
 }
