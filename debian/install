@@ -11,3 +11,5 @@ icon/sonicpi.png /usr/share/icons/Kano/88x88/apps
 icon/application-x-kano-make-music.png /usr/share/icons/Kano/88x88/mimetypes
 icon/SonicPi-hover.png /usr/share/kano-desktop/icons/
 icon/make-music.app /usr/share/applications
+icon/locale/es_AR/*.app /usr/share/applications/locale/es_AR/
+
