@@ -958,13 +958,15 @@ void MainWindow::initPrefsWindow() {
   // audio_box->addStretch(1);
   advancedAudioBox->setLayout(advanced_audio_box_layout);
 
-
+  // Disabled the radio buttons as they are at odds with the Kano system (PiHat).
   QGroupBox *audioOutputBox = new QGroupBox(tr("Raspberry Pi Audio Output"));
   audioOutputBox->setToolTip(tr("Your Raspberry Pi has two forms of audio output.\nFirstly, there is the headphone jack of the Raspberry Pi itself.\nSecondly, some HDMI monitors/TVs support audio through the HDMI port.\nUse these buttons to force the output to the one you want."));
   rp_force_audio_default = new QRadioButton(tr("&Default"));
+  rp_force_audio_default->setEnabled(false);
   rp_force_audio_headphones = new QRadioButton(tr("&Headphones"));
+  rp_force_audio_headphones->setEnabled(false);
   rp_force_audio_hdmi = new QRadioButton(tr("&HDMI"));
-
+  rp_force_audio_hdmi->setEnabled(false);
 
   connect(rp_force_audio_default, SIGNAL(clicked()), this, SLOT(setRPSystemAudioAuto()));
   connect(rp_force_audio_headphones, SIGNAL(clicked()), this, SLOT(setRPSystemAudioHeadphones()));
@@ -2075,10 +2077,10 @@ void MainWindow::setRPSystemAudioHeadphones()
   //do nothing
 #else
   //assuming Raspberry Pi
-  statusBar()->showMessage(tr("Switching To Headphone Audio Output..."), 2000);
-  QProcess *p = new QProcess();
-  QString prog = "amixer cset numid=3 1";
-  p->start(prog);
+  // statusBar()->showMessage(tr("Switching To Headphone Audio Output..."), 2000);
+  // QProcess *p = new QProcess();
+  // QString prog = "amixer cset numid=3 1";
+  // p->start(prog);
 #endif
 }
 
@@ -2091,10 +2093,10 @@ void MainWindow::setRPSystemAudioHDMI()
   //do nothing
 #else
   //assuming Raspberry Pi
-  statusBar()->showMessage(tr("Switching To HDMI Audio Output..."), 2000);
-  QProcess *p = new QProcess();
-  QString prog = "amixer cset numid=3 2";
-  p->start(prog);
+  // statusBar()->showMessage(tr("Switching To HDMI Audio Output..."), 2000);
+  // QProcess *p = new QProcess();
+  // QString prog = "amixer cset numid=3 2";
+  // p->start(prog);
 #endif
 }
 
@@ -2106,10 +2108,10 @@ void MainWindow::setRPSystemAudioAuto()
   //do nothing
 #else
   //assuming Raspberry Pi
-  statusBar()->showMessage(tr("Switching To Default Audio Output..."), 2000);
-  QProcess *p = new QProcess();
-  QString prog = "amixer cset numid=3 0";
-  p->start(prog);
+  // statusBar()->showMessage(tr("Switching To Default Audio Output..."), 2000);
+  // QProcess *p = new QProcess();
+  // QString prog = "amixer cset numid=3 0";
+  // p->start(prog);
 #endif
 }
 
