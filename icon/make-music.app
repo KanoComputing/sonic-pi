@@ -14,5 +14,6 @@
     "dependencies": ["make-music"],
     "launch_command": "kano-tracker-ctl session run make-music \"/usr/bin/kano-launcher 'make-music'\"",
     "overrides": [],
-    "desktop": false
+    "desktop": false,
+    "priority": 450
 }
