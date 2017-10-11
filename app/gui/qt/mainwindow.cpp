@@ -1505,6 +1505,7 @@ void MainWindow::load_share(const QString share_filename, const bool force)
     if (force || reply == QMessageBox::Yes) {
         this->changeTab(this->workspace_max - 1);
         QTextStream shared_code(&shared_creation);
+        shared_code.setCodec("UTF-8");
         QString code = shared_code.readAll();
         this->getCurrentWorkspace()->setText(code);
     }
@@ -2550,6 +2551,7 @@ void MainWindow::loadFile(const QString &fileName, SonicPiScintilla* &text)
   }
 
   QTextStream in(&file);
+  in.setCodec("UTF-8");
   QApplication::setOverrideCursor(Qt::WaitCursor);
   text->setText(in.readAll());
   QApplication::restoreOverrideCursor();

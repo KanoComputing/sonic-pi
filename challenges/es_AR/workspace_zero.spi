@@ -1,13 +1,13 @@
 #------------------------------------------------------#
-# DesafÃ­o 1 : Pon algunos ritmos funky
+# Desafío 1 : Pon algunos ritmos funky
 # Empezieza a jugar con Sonic Pi
 #------------------------------------------------------#
 
 # Vamos a hacer algo que probablamente nunca has hecho
-# antes: Â¡vamos a hacer mÃºsica mediante CÃ“DIGO INFORMÃTICO! 
+# antes: ¡vamos a hacer música mediante CÓDIGO INFORMÁTICO!
 
-# AquÃ­ estÃ¡ una canciÃ³n funky pata ayudarte a empezar. 
-# Â¡Haz click en el botÃ³n Run en la parte superior izquierda para escucharla!
+# Aquí está una canción funky pata ayudarte a empezar.
+# ¡Haz click en el botón Run en la parte superior izquierda para escucharla!
 
 play 80
 sleep 1
@@ -18,4 +18,4 @@ sleep 1
 play 71
 sleep 1
 
-# Genial, Â¿verdad? Â¡Escribamos nuestra propia! Abre DesafÃ­o 2.  
+# Genial, ¿verdad? ¡Escribamos nuestra propia! Abre Desafío 2.

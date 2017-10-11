@@ -1,6 +1,6 @@
 #------------------------------------------------------#
-# DesafÃ­o 7 : Â¡Realmente aleatorio!
-# Haz mÃºsica con nÃºmeros aleatorios
+# Desafío 7 : ¡Realmente aleatorio!
+# Haz música con números aleatorios
 #------------------------------------------------------#
 
 
@@ -20,10 +20,10 @@
 
 
 
-# rrand rrand le dice a la computadora que elija un nÃºmero aleatorio
-# entre los dos nÃºmeros que fijas.
+# rrand rrand le dice a la computadora que elija un número aleatorio
+# entre los dos números que fijas.
 
-# P.ej. rrand(50,100) elegirÃ¡ un nÃºmero entre el 50 y el 100.
+# P.ej. rrand(50,100) elegirá un número entre el 50 y el 100.
 
 
 #************************************#

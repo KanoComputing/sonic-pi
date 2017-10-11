@@ -1,15 +1,15 @@
 #------------------------------------------------------#
-# DesafÃ­o 4 : Â¡Sigue escribiendo!
-# Usa tus nuevas habilidades para escribir una canciÃ³n.
+# Desafío 4 : ¡Sigue escribiendo!
+# Usa tus nuevas habilidades para escribir una canción.
 #------------------------------------------------------#
 
-# Utiliza play + sleep para componer tu propia canciÃ³n a continuaciÃ³n:
+# Utiliza play + sleep para componer tu propia canción a continuación:
 
 play 80
 sleep 1
 
 
-#Â¡TermÃ­nala tÃº!â€¦
+#¡Termínala tú!?
 
 
 
