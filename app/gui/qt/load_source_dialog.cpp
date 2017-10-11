@@ -1,6 +1,10 @@
 #include <QFileDialog>
+#include <QFile>
+#include <QTextStream>
+#include <QIODevice>
 #include <fstream>
 #include <iostream>
+#include <QDebug>
 
 #include "load_source_dialog.h"
 
@@ -33,11 +37,19 @@ void LoadSourceDialog::connect_listeners() {
 int LoadSourceDialog::read_file(std::string filename) {
     file_contents = "";
 
-    std::ifstream file(filename.c_str());
-    char buff;
+    QFile file(QString::fromStdString(filename));
 
-    while (file.get(buff)) {
-        file_contents += buff;
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return -1;
+    }
+
+    QTextStream stream(&file);
+    stream.setCodec("UTF-8");
+
+    while (!stream.atEnd()) {
+        QString line = stream.readLine();
+        file_contents += line.toStdString();
+        file_contents += '\n';
     }
 
     file.close();
@@ -60,7 +72,7 @@ int LoadSourceDialog::load_from_local() {
         return -1;
     }
 
-    read_file(filename.toUtf8().constData());
+    read_file(filename.toStdString());
 
     this->accept();
     return 0;

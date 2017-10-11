@@ -1,3 +1,16 @@
+make-music (3.9.2-0) unstable; urgency=low
+
+  * Encoded es_AR challenges to Latin1 due to Sonic Pi bug (backport)
+  * Fixed loading files with UTF-8 characters
+
+ -- Team Kano <dev@kano.me>  Wed, 11 Oct 2017 18:31:00 +0100
+
+make-music (3.9.1-0) unstable; urgency=low
+
+  * Fixed missing comment on es_AR challenge two (backport)
+
+ -- Team Kano <dev@kano.me>  Fri, 21 Jul 2017 13:12:47 +0100
+
 make-music (2.10-0) unstable; urgency=low
 
   * Updated version to Sonic-Pi 2.10.0 (Cowbell)

@@ -1,23 +1,23 @@
 #------------------------------------------------------#
-# Desaf铆o 5 : Nuevo instrumento
-# 隆Cambia el sonido de tu m煤sica!
+# Desaf韔 5 : Nuevo instrumento
+# ambia el sonido de tu m鷖ica!
 #------------------------------------------------------#
 
-# 隆Agreguemos un nuevo instrumento a la canci贸n que acabas de escribir! 
+# greguemos un nuevo instrumento a la canci髇 que acabas de escribir!
 
 # 1. Escribe: use_synth :saw
 
 
 
-# 2. Copia tu canci贸n del desaf铆o anterior y 
-#    p茅gala a continuaci贸n
+# 2. Copia tu canci髇 del desaf韔 anterior y
+#    p間ala a continuaci髇
 
 
 
 
 
-# 隆with_synth nos permite cambiar el efecto de sonido que usa
-# tu computadora cuando reproduce nuestra canci贸n!
+# ith_synth nos permite cambiar el efecto de sonido que usa
+# tu computadora cuando reproduce nuestra canci髇!
 
 #************************************#
 #     Ahora presiona la tecla RUN    #
