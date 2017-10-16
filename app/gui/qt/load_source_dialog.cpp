@@ -4,7 +4,6 @@
 #include <QIODevice>
 #include <fstream>
 #include <iostream>
-#include <QDebug>
 
 #include "load_source_dialog.h"
 
