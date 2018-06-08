@@ -1,0 +1,8 @@
+# Allow make-music to run
+#
+
+#
+Cmnd_Alias VM_COMMIT = /sbin/sysctl vm.overcommit_memory\=0, \
+ /sbin/sysctl vm.overcommit_memory\=1
+
+%sudo   ALL=(root) NOPASSWD: VM_COMMIT

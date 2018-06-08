@@ -6,12 +6,11 @@
 # License: http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
 #
 
-TMP_FILE=/tmp/kano-toolset_conf
 
 case "$1" in
     configure)
-        # Create Symlink
-        ln -s /usr/share/sonic-pi/app/gui/qt/sonic-pi /usr/bin/make-music
+        # Enforce permissions on sudoers file
+        chmod 0440 /etc/sudoers.d/make_music_conf
 
         # From Debian docs: "postinst configure most-recently-configured-version"
         # If there is no most recently configured version dpkg will pass a null argument

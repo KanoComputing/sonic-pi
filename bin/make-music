@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# make-music
+#
+# Copyright (C) 2018 Kano Computing Ltd.
+# License: http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
+
+sudo /sbin/sysctl vm.overcommit_memory=1
+/usr/bin/sonic-pi
+sudo /sbin/sysctl vm.overcommit_memory=0

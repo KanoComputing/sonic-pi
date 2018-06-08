@@ -6,4 +6,5 @@ icon/application-x-kano-make-music.png /usr/share/icons/Kano/88x88/mimetypes
 icon/SonicPi-hover.png /usr/share/kano-desktop/icons/
 icon/make-music.app /usr/share/applications
 icon/locale/es_AR/*.app /usr/share/applications/locale/es_AR/
-
+sudoers/make_music_conf /etc/sudoers.d/
+bin/make-music /usr/bin/

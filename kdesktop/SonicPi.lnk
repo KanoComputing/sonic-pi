@@ -1,7 +1,7 @@
 table Icon
   Caption:
   AppID: make-musi[c]
-  Command: /usr/bin/kano-launcher /usr/bin/sonic-pi
+  Command: /usr/bin/kano-launcher /usr/bin/make-music
   Singleton: true
   Icon: /usr/share/kano-desktop/icons/sonicpi.png
   IconHover: /usr/share/kano-desktop/icons/SonicPi-hover.png
